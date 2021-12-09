@@ -3,7 +3,7 @@
 #include <string.h>
 #include "baker.h"
 
-Baked declare_list() {
+Baked declareList() {
     Baked new_list;
 
     new_list.size = 0;
@@ -11,45 +11,45 @@ Baked declare_list() {
     new_list.bytes = (char *) malloc(new_list.capacity * sizeof(char));
 
     if (new_list.bytes == NULL) {
-        printf("Segmentation fault\n");
+        printf("ERROR! Segmentation fault, line: \n", __LINE__);
     }
 
     return new_list;
 }
 
-void push_back(Baked *list, char new_byte) {
+void pushBack(Baked *list, char new_byte) {
     if (list->size == list->capacity) {
         list->capacity *= 2;
         list->bytes = (char *) realloc(list->bytes, list->capacity * sizeof(char));
 
         if (list->bytes == NULL) {
-            printf("Segmentation fault\n");
+            printf("ERROR! Segmentation fault, line: \n", __LINE__);
         }
     }
     list->bytes[(list->size)++] = new_byte;
 }
 
 Baked bake(int f_num, char **filenames) {
-    Baked list = declare_list();
+    Baked list = declareList();
 
     for (int i = 0; i < f_num; i++) {
         int length = strlen(filenames[i]);
 
         // filename size writing
         for (int j = 0; j < 4; j++) {
-            push_back(&list, length % 256);
+            pushBack(&list, length % 256);
             length /= 256;
         }
 
         //filename writing
         for (int j = 0; j < length; j++) {
-            push_back(&list, filenames[i][j]);
+            pushBack(&list, filenames[i][j]);
         }
 
         //allocating memory for file size bytes
         int start_sz_idx = list.size;
         for (int j = 0; j < 4; j++) {
-            push_back(&list, 0);
+            pushBack(&list, 0);
         }
 
         int size = 0;
@@ -59,7 +59,7 @@ Baked bake(int f_num, char **filenames) {
 
         char new_byte;
         while ((new_byte = fgetc(in)) != EOF) {
-            push_back(&list, new_byte);
+            pushBack(&list, new_byte);
             size++;
         }
 

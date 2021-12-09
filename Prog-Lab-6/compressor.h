@@ -1,18 +1,15 @@
 #ifndef PROG_LAB_6_COMPRESSOR_H
 #define PROG_LAB_6_COMPRESSOR_H
 
-#define QUEUESIZE 256
-#define ARRAYSIZE 256
+#define EMPTY -1
 
-typedef struct {
-    char array[QUEUESIZE];
-    int tail;
-    int head;
-} Queue;
+struct str_Node {
+    char value;
+    int rank;
+    struct str_Node *left;
+    struct str_Node *right;
+};
 
-typedef struct {
-    char byte;
-    long times;
-} Frequency;
+typedef struct str_Node Node;
 
 #endif //PROG_LAB_6_COMPRESSOR_H

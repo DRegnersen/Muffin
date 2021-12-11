@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "list.h"
 #include "compressor.h"
 
 void sort(int size, Node ***array) {
@@ -64,7 +65,7 @@ void encode(char ***encoder, Node *root, char *cur_code) {
     }
 }
 
-char **createEncoder(int b_size, char *bytes) {
+char **createEncoder(ArrayList toCompress) {
     Node **freq_table = NULL;
     freq_table = (Node **) malloc(256 * sizeof(Node *));
 
@@ -87,12 +88,12 @@ char **createEncoder(int b_size, char *bytes) {
 
     int q_size = 0;
 
-    for (int i = 0; i < b_size; i++) {
-        if (freq_table[(unsigned char) bytes[i]]->rank == EMPTY) {
-            freq_table[(unsigned char) bytes[i]]->rank = 1;
+    for (int i = 0; i < toCompress.size; i++) {
+        if (freq_table[(unsigned char) toCompress.bytes[i]]->rank == EMPTY) {
+            freq_table[(unsigned char) toCompress.bytes[i]]->rank = 1;
             q_size++;
         } else {
-            freq_table[(unsigned char) bytes[i]]->rank++;
+            freq_table[(unsigned char) toCompress.bytes[i]]->rank++;
         }
     }
 
@@ -128,6 +129,13 @@ char **createEncoder(int b_size, char *bytes) {
         printf("ERROR! Segmentation fault, line: \n", __LINE__);
     }
 
+    for (int i = 0; i < 256; i++) {
+        encoder[i] = (char *) malloc(CODESIZE * sizeof(char));
+        if (encoder[i] == NULL) {
+            printf("ERROR! Segmentation fault, line: \n", __LINE__);
+        }
+    }
+
     encode(&encoder, queue[0], "");
 
     for (int i = 0; i < q_size; i++) {
@@ -138,4 +146,59 @@ char **createEncoder(int b_size, char *bytes) {
     queue = NULL;
 
     return encoder;
+}
+
+// LITTLE ENDIAN
+ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
+    char **encoder = createEncoder(data);
+    ArrayList compressed = declareList();
+
+    short *contains_table = NULL;
+    contains_table = (short *) malloc(256 * sizeof(short));
+
+    if (contains_table == NULL) {
+        printf("ERROR! Segmentation fault, line: \n", __LINE__);
+    }
+
+    for (int i = 0; i < 256; i++) {
+        contains_table[i] = 0;
+    }
+
+    char new_byte = 0;
+    int power = 1;
+
+    for (int i = 0; i < data.size; i++) {
+        contains_table[(unsigned char) data.bytes[i]] = 1;
+
+        char *code = encoder[(unsigned char) data.bytes[i]];
+        int length = strlen(code);
+
+        for (int j = 0; j < length; j++) {
+            if (power >= 256) {
+                pushBack(&compressed, new_byte);
+                new_byte = 0;
+                power = 1;
+            }
+            new_byte += power * code[j];
+            power *= 2;
+        }
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (contains_table[i]) {
+            pushBack(compressed_encoder, (char) i);
+
+            int length = strlen(encoder[i]);
+            pushBack(compressed_encoder, length);
+
+            for (int j = 0; j < length; j++) {
+                pushBack(compressed_encoder, encoder[i][j]);
+            }
+        }
+    }
+
+    free(contains_table);
+    contains_table = NULL;
+
+    return compressed;
 }

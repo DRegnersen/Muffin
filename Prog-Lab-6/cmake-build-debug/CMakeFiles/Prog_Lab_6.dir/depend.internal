@@ -4,10 +4,16 @@
 CMakeFiles/Prog_Lab_6.dir/baker.c.obj
  C:/Users/deofr/C/Prog-Lab-6/baker.c
  C:/Users/deofr/C/Prog-Lab-6/baker.h
+ C:/Users/deofr/C/Prog-Lab-6/list.h
 CMakeFiles/Prog_Lab_6.dir/compressor.c.obj
  C:/Users/deofr/C/Prog-Lab-6/compressor.c
  C:/Users/deofr/C/Prog-Lab-6/compressor.h
+ C:/Users/deofr/C/Prog-Lab-6/list.h
+CMakeFiles/Prog_Lab_6.dir/list.c.obj
+ C:/Users/deofr/C/Prog-Lab-6/list.c
+ C:/Users/deofr/C/Prog-Lab-6/list.h
 CMakeFiles/Prog_Lab_6.dir/main.c.obj
  C:/Users/deofr/C/Prog-Lab-6/baker.h
  C:/Users/deofr/C/Prog-Lab-6/compressor.h
+ C:/Users/deofr/C/Prog-Lab-6/list.h
  C:/Users/deofr/C/Prog-Lab-6/main.c

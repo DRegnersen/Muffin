@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Prog_Lab_6.dir/baker.c.obj"
   "CMakeFiles/Prog_Lab_6.dir/compressor.c.obj"
+  "CMakeFiles/Prog_Lab_6.dir/list.c.obj"
   "CMakeFiles/Prog_Lab_6.dir/main.c.obj"
   "Prog_Lab_6.exe"
   "Prog_Lab_6.exe.manifest"

@@ -176,6 +176,30 @@ compressor.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Prog_Lab_6.dir\build.make CMakeFiles/Prog_Lab_6.dir/compressor.c.s
 .PHONY : compressor.c.s
 
+list.obj: list.c.obj
+.PHONY : list.obj
+
+# target to build an object file
+list.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Prog_Lab_6.dir\build.make CMakeFiles/Prog_Lab_6.dir/list.c.obj
+.PHONY : list.c.obj
+
+list.i: list.c.i
+.PHONY : list.i
+
+# target to preprocess a source file
+list.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Prog_Lab_6.dir\build.make CMakeFiles/Prog_Lab_6.dir/list.c.i
+.PHONY : list.c.i
+
+list.s: list.c.s
+.PHONY : list.s
+
+# target to generate assembly for a file
+list.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Prog_Lab_6.dir\build.make CMakeFiles/Prog_Lab_6.dir/list.c.s
+.PHONY : list.c.s
+
 main.obj: main.c.obj
 .PHONY : main.obj
 
@@ -215,6 +239,9 @@ help:
 	@echo ... compressor.obj
 	@echo ... compressor.i
 	@echo ... compressor.s
+	@echo ... list.obj
+	@echo ... list.i
+	@echo ... list.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

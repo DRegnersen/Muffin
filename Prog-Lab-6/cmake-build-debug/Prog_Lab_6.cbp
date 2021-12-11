@@ -88,6 +88,12 @@
 		<Unit filename="C:/Users/deofr/C/Prog-Lab-6/compressor.h">
 			<Option target="Prog_Lab_6"/>
 		</Unit>
+		<Unit filename="C:/Users/deofr/C/Prog-Lab-6/list.c">
+			<Option target="Prog_Lab_6"/>
+		</Unit>
+		<Unit filename="C:/Users/deofr/C/Prog-Lab-6/list.h">
+			<Option target="Prog_Lab_6"/>
+		</Unit>
 		<Unit filename="C:/Users/deofr/C/Prog-Lab-6/main.c">
 			<Option target="Prog_Lab_6"/>
 		</Unit>

@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/deofr/C/Prog-Lab-6/baker.c" "C:/Users/deofr/C/Prog-Lab-6/cmake-build-debug/CMakeFiles/Prog_Lab_6.dir/baker.c.obj"
   "C:/Users/deofr/C/Prog-Lab-6/compressor.c" "C:/Users/deofr/C/Prog-Lab-6/cmake-build-debug/CMakeFiles/Prog_Lab_6.dir/compressor.c.obj"
+  "C:/Users/deofr/C/Prog-Lab-6/list.c" "C:/Users/deofr/C/Prog-Lab-6/cmake-build-debug/CMakeFiles/Prog_Lab_6.dir/list.c.obj"
   "C:/Users/deofr/C/Prog-Lab-6/main.c" "C:/Users/deofr/C/Prog-Lab-6/cmake-build-debug/CMakeFiles/Prog_Lab_6.dir/main.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

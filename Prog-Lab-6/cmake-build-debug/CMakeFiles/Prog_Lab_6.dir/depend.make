@@ -3,11 +3,17 @@
 
 CMakeFiles/Prog_Lab_6.dir/baker.c.obj: \
  ../baker.c \
- ../baker.h
+ ../baker.h \
+ ../list.h
 CMakeFiles/Prog_Lab_6.dir/compressor.c.obj: \
  ../compressor.c \
- ../compressor.h
+ ../compressor.h \
+ ../list.h
+CMakeFiles/Prog_Lab_6.dir/list.c.obj: \
+ ../list.c \
+ ../list.h
 CMakeFiles/Prog_Lab_6.dir/main.c.obj: \
  ../baker.h \
  ../compressor.h \
+ ../list.h \
  ../main.c

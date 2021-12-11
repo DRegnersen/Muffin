@@ -2,6 +2,7 @@
 #define PROG_LAB_6_COMPRESSOR_H
 
 #define EMPTY -1
+#define CODESIZE 8
 
 struct str_Node {
     char value;
@@ -12,6 +13,8 @@ struct str_Node {
 
 typedef struct str_Node Node;
 
-char **createEncoder(int b_size, char *bytes);
+char **createEncoder(ArrayList toCompress);
+
+ArrayList compress(ArrayList data, ArrayList *compressed_encoder);
 
 #endif //PROG_LAB_6_COMPRESSOR_H

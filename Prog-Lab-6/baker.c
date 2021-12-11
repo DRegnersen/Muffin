@@ -46,7 +46,7 @@ Baked bake(int f_num, char **filenames) {
             pushBack(&list, filenames[i][j]);
         }
 
-        //allocating memory for file size bytes
+        //allocating memory for file size
         int start_sz_idx = list.size;
         for (int j = 0; j < 4; j++) {
             pushBack(&list, 0);

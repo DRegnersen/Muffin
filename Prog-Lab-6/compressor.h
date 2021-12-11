@@ -12,4 +12,6 @@ struct str_Node {
 
 typedef struct str_Node Node;
 
+char **createEncoder(int b_size, char *bytes);
+
 #endif //PROG_LAB_6_COMPRESSOR_H

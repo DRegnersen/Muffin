@@ -9,6 +9,10 @@ typedef struct {
     char *bytes;
 } Baked;
 
+Baked declareList();
+
+void pushBack(Baked *list, char new_byte);
+
 Baked bake(int f_num, char **filenames);
 
 #endif //PROG_LAB_6_BAKER_H

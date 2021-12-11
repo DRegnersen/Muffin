@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "compressor.h"
 
 void sort(int size, Node ***array) {
@@ -39,7 +40,31 @@ Node *merge(int size, Node ***array) {
     return new_node;
 }
 
-Node **makeTree(int b_size, char *bytes) {
+void encode(char ***encoder, Node *root, char *cur_code) {
+    if (root == NULL) {
+        printf("WARNING! Tree is empty.\n");
+        return;
+    }
+
+    if (root->left == NULL && root->right == NULL) {
+        strcpy((*encoder)[(unsigned char) root->value], cur_code);
+        return;
+    }
+
+    if (root->left != NULL) {
+        char new_code[strlen(cur_code) + 1];
+        sprintf(new_code, "%s0", cur_code);
+        encode(encoder, root->left, new_code);
+    }
+
+    if (root->right != NULL) {
+        char new_code[strlen(cur_code) + 1];
+        sprintf(new_code, "%s1", cur_code);
+        encode(encoder, root->right, new_code);
+    }
+}
+
+char **createEncoder(int b_size, char *bytes) {
     Node **freq_table = NULL;
     freq_table = (Node **) malloc(256 * sizeof(Node *));
 
@@ -94,10 +119,23 @@ Node **makeTree(int b_size, char *bytes) {
     freq_table = NULL;
 
     sort(q_size, &queue);
-
     while (merge(q_size, &queue) != NULL);
 
-    Node *root = queue[0];
+    char **encoder = NULL;
+    encoder = (char **) malloc(256 * sizeof(char *));
 
-    return queue;
+    if (encoder == NULL) {
+        printf("ERROR! Segmentation fault, line: \n", __LINE__);
+    }
+
+    encode(&encoder, queue[0], "");
+
+    for (int i = 0; i < q_size; i++) {
+        free(queue[i]);
+        queue[i] = NULL;
+    }
+    free(queue);
+    queue = NULL;
+
+    return encoder;
 }

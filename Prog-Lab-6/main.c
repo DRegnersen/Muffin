@@ -6,6 +6,10 @@
 
 void createMuffin(char *muf_name, char *directory, s_ArrayList filenames) {
     ArrayList data = bake(filenames);
+    for (int i = 0; i < data.size; i++) {
+        printf("%c", data.bytes[i]);
+    }
+
     ArrayList encoder = declareList();
     ArrayList compressed_data = compress(data, &encoder);
     ArrayList muffin = bakeEncoder(encoder, compressed_data);
@@ -41,11 +45,20 @@ int main(int argc, char **argv) {
             }
 
             printf("Enter directory:");
-            gets(directory);
+            // gets(directory);
             printf("Enter Muffin's name:");
-            gets(muf_name);
+            //gets(muf_name);
 
-            createMuffin(muf_name, directory, filenames);
+            createMuffin("new_arch", "C:\\Users\\deofr\\C\\Prog-Lab-6\\archive", filenames);
+
+        } else if (!strcmp(command, "--extract")) {
+            ArrayList encoder = declareList();
+            ArrayList data = declareList();
+            splitEncoder(&encoder, &data, "C:\\Users\\deofr\\C\\Prog-Lab-6\\archive\\new_arch.muf");
+            ArrayList decoded = extract(data, encoder);
+            for (int j = 0; j < decoded.size; j++) {
+                printf("%c", decoded.bytes[j]);
+            }
         } else {
             printf("Command '%s' is unacceptable\n", command);
         }

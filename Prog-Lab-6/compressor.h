@@ -17,4 +17,6 @@ char **createEncoder(ArrayList toCompress);
 
 ArrayList compress(ArrayList data, ArrayList *compressed_encoder);
 
+ArrayList extract(ArrayList data, ArrayList compressed_encoder);
+
 #endif //PROG_LAB_6_COMPRESSOR_H

@@ -15,6 +15,8 @@ ArrayList bake(s_ArrayList filenames) {
             length /= 256;
         }
 
+        length = strlen(filenames.values[i]);
+
         //filename writing
         for (int j = 0; j < length; j++) {
             pushBack(&list, filenames.values[i][j]);
@@ -52,22 +54,22 @@ ArrayList bake(s_ArrayList filenames) {
 ArrayList bakeEncoder(ArrayList encoder, ArrayList data) {
     ArrayList muffin = declareList();
 
-    int encoder_sz = encoder.size;
+    int e_size = encoder.size;
 
     for (int i = 0; i < 4; i++) {
-        pushBack(&muffin, encoder_sz % 256);
-        encoder_sz /= 256;
+        pushBack(&muffin, e_size % 256);
+        e_size /= 256;
     }
 
     for (int i = 0; i < encoder.size; i++) {
         pushBack(&muffin, encoder.bytes[i]);
     }
 
-    int data_sz = data.size;
+    int d_size = data.size;
 
     for (int i = 0; i < 4; i++) {
-        pushBack(&muffin, data_sz % 256);
-        data_sz /= 256;
+        pushBack(&muffin, d_size % 256);
+        d_size /= 256;
     }
 
     for (int i = 0; i < data.size; i++) {
@@ -75,4 +77,36 @@ ArrayList bakeEncoder(ArrayList encoder, ArrayList data) {
     }
 
     return muffin;
+}
+
+void splitEncoder(ArrayList *encoder, ArrayList *data, char *filename) {
+    int power;
+
+    FILE *in = fopen(filename, "rb");
+
+    int e_size = 0;
+    power = 1;
+
+    for (int i = 0; i < 4; i++) {
+        e_size += fgetc(in) * power;
+        power *= 256;
+    }
+
+    for (int i = 0; i < e_size; i++) {
+        pushBack(encoder, fgetc(in));
+    }
+
+    int d_size = 0;
+    power = 1;
+
+    for (int i = 0; i < 4; i++) {
+        d_size += fgetc(in) * power;
+        power *= 256;
+    }
+
+    for (int i = 0; i < d_size; i++) {
+        pushBack(data, fgetc(in));
+    }
+
+    fclose(in);
 }

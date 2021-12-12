@@ -134,21 +134,21 @@ char **createEncoder(ArrayList toCompress) {
         if (encoder[i] == NULL) {
             printf("ERROR! Segmentation fault, line: \n", __LINE__);
         }
+
     }
 
     encode(&encoder, queue[0], "");
 
-    for (int i = 0; i < q_size; i++) {
-        free(queue[i]);
-        queue[i] = NULL;
-    }
+    //  for (int i = 0; i < q_size; i++) {
+    //    free(queue[i]);
+    //     queue[i] = NULL;
+    //  }
     free(queue);
     queue = NULL;
 
     return encoder;
 }
 
-// LITTLE ENDIAN
 ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     char **encoder = createEncoder(data);
     ArrayList compressed = declareList();
@@ -179,9 +179,13 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
                 new_byte = 0;
                 power = 1;
             }
-            new_byte += power * code[j];
+            new_byte += power * (code[j] - '0');
             power *= 2;
         }
+    }
+
+    if (power != 1) {
+        pushBack(&compressed, new_byte);
     }
 
     for (int i = 0; i < 256; i++) {
@@ -195,7 +199,7 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
             power = 1;
 
             for (int j = 0; j < length; j++) {
-                new_byte += power * encoder[i][j];
+                new_byte += power * (encoder[i][j] - '0');
                 power *= 2;
             }
             pushBack(compressed_encoder, new_byte);
@@ -205,5 +209,87 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     free(contains_table);
     contains_table = NULL;
 
+    for (int i = 0; i < 256; i++) {
+        free(encoder[i]);
+        encoder[i] = NULL;
+    }
+
+    free(encoder);
+    encoder = NULL;
+
     return compressed;
+}
+
+void insertNode(Node **root, char byte, int c_size, int code) {
+    if ((*root) == NULL) {
+        (*root) = (Node *) malloc(sizeof(Node));
+
+        (*root)->left = NULL;
+        (*root)->right = NULL;
+    }
+
+    if (c_size == 0) {
+        (*root)->value = byte;
+        return;
+    }
+
+    if (code % 2 == 0) {
+        insertNode(&((*root)->left), byte, c_size - 1, code / 2);
+    } else {
+        insertNode(&((*root)->right), byte, c_size - 1, code / 2);
+    }
+}
+
+Node *createDecodingTree(ArrayList compressed_encoder) {
+    Node *root = NULL;
+
+    for (int i = 0; i < compressed_encoder.size; i++) {
+        char byte = compressed_encoder.bytes[i++];
+        int c_size = (unsigned char) compressed_encoder.bytes[i++];
+        int code = (unsigned char) compressed_encoder.bytes[i];
+
+        insertNode(&root, byte, c_size, code);
+    }
+
+    return root;
+}
+
+ArrayList extract(ArrayList data, ArrayList compressed_encoder) {
+    ArrayList extracted = declareList();
+
+    Node *root = createDecodingTree(compressed_encoder);
+    Node *cur_node = root;
+
+    int idx = 0;
+    int bit_count = 8;
+    short isEnd = 0;
+
+    while (idx < data.size) {
+        while (cur_node->left != NULL && cur_node->right != NULL) {
+            if (idx >= data.size) {
+                isEnd = 1;
+                break;
+            }
+
+            if (((unsigned char) data.bytes[idx]) % 2 == 0) {
+                cur_node = cur_node->left;
+            } else {
+                cur_node = cur_node->right;
+            }
+            bit_count--;
+            data.bytes[idx] = ((unsigned char) data.bytes[idx]) / 2;
+
+            if (bit_count == 0) {
+                idx++;
+                bit_count = 8;
+            }
+        }
+
+        if (!isEnd) {
+            pushBack(&extracted, cur_node->value);
+            cur_node = root;
+        }
+    }
+
+    return extracted;
 }

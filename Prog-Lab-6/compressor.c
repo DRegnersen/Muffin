@@ -191,9 +191,14 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
             int length = strlen(encoder[i]);
             pushBack(compressed_encoder, length);
 
+            new_byte = 0;
+            power = 1;
+
             for (int j = 0; j < length; j++) {
-                pushBack(compressed_encoder, encoder[i][j]);
+                new_byte += power * encoder[i][j];
+                power *= 2;
             }
+            pushBack(compressed_encoder, new_byte);
         }
     }
 

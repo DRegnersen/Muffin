@@ -6,9 +6,39 @@
 
 #IncludeRegexTransform: 
 
+C:/Users/deofr/C/Prog-Lab-6/baker.c
+stdio.h
+-
+string.h
+-
+list.h
+C:/Users/deofr/C/Prog-Lab-6/list.h
+baker.h
 C:/Users/deofr/C/Prog-Lab-6/baker.h
 
+C:/Users/deofr/C/Prog-Lab-6/baker.h
+
+C:/Users/deofr/C/Prog-Lab-6/compressor.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+list.h
+C:/Users/deofr/C/Prog-Lab-6/list.h
+compressor.h
 C:/Users/deofr/C/Prog-Lab-6/compressor.h
+
+C:/Users/deofr/C/Prog-Lab-6/compressor.h
+
+C:/Users/deofr/C/Prog-Lab-6/list.c
+stdio.h
+-
+stdlib.h
+-
+list.h
+C:/Users/deofr/C/Prog-Lab-6/list.h
 
 C:/Users/deofr/C/Prog-Lab-6/list.h
 

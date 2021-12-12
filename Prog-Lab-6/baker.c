@@ -52,8 +52,22 @@ ArrayList bake(s_ArrayList filenames) {
 ArrayList bakeEncoder(ArrayList encoder, ArrayList data) {
     ArrayList muffin = declareList();
 
+    int encoder_sz = encoder.size;
+
+    for (int i = 0; i < 4; i++) {
+        pushBack(&muffin, encoder_sz % 256);
+        encoder_sz /= 256;
+    }
+
     for (int i = 0; i < encoder.size; i++) {
         pushBack(&muffin, encoder.bytes[i]);
+    }
+
+    int data_sz = data.size;
+
+    for (int i = 0; i < 4; i++) {
+        pushBack(&muffin, data_sz % 256);
+        data_sz /= 256;
     }
 
     for (int i = 0; i < data.size; i++) {

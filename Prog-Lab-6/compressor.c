@@ -199,20 +199,28 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
             power = 1;
 
             for (int j = 0; j < length; j++) {
+                if (power >= 256) {
+                    pushBack(compressed_encoder, new_byte);
+                    new_byte = 0;
+                    power = 1;
+                }
                 new_byte += power * (encoder[i][j] - '0');
                 power *= 2;
             }
-            pushBack(compressed_encoder, new_byte);
+
+            if (power != 1) {
+                pushBack(compressed_encoder, new_byte);
+            }
         }
     }
 
     free(contains_table);
     contains_table = NULL;
 
-    for (int i = 0; i < 256; i++) {
-        free(encoder[i]);
-        encoder[i] = NULL;
-    }
+    // for (int i = 0; i < 256; i++) {
+    //     free(encoder[i]);
+    //     encoder[i] = NULL;
+    // }
 
     free(encoder);
     encoder = NULL;
@@ -246,7 +254,16 @@ Node *createDecodingTree(ArrayList compressed_encoder) {
     for (int i = 0; i < compressed_encoder.size; i++) {
         char byte = compressed_encoder.bytes[i++];
         int c_size = (unsigned char) compressed_encoder.bytes[i++];
-        int code = (unsigned char) compressed_encoder.bytes[i];
+        int code = 0;
+
+        int bytes_count = (c_size % 8 == 0) ? c_size / 8 : c_size / 8 + 1;
+        int power = 1;
+
+        for (int j = i; j < i + bytes_count; j++) {
+            code += ((unsigned char) compressed_encoder.bytes[j]) * power;
+            power *= 256;
+        }
+        i += bytes_count - 1;
 
         insertNode(&root, byte, c_size, code);
     }
@@ -271,13 +288,16 @@ ArrayList extract(ArrayList data, ArrayList compressed_encoder) {
                 break;
             }
 
-            if (((unsigned char) data.bytes[idx]) % 2 == 0) {
+            unsigned char byte = data.bytes[idx];
+            unsigned char bit = byte % 2;
+
+            if (bit == 0) {
                 cur_node = cur_node->left;
             } else {
                 cur_node = cur_node->right;
             }
             bit_count--;
-            data.bytes[idx] = ((unsigned char) data.bytes[idx]) / 2;
+            data.bytes[idx] = byte / 2;
 
             if (bit_count == 0) {
                 idx++;

@@ -7,7 +7,10 @@ ArrayList bake(s_ArrayList filenames) {
     ArrayList list = declareList();
 
     for (int i = 0; i < filenames.size; i++) {
-        int length = strlen(filenames.values[i]);
+        char local[LINESIZE];
+        sscanf(strrchr(filenames.values[i], '\\'), "\\%s", local);
+
+        int length = strlen(local);
 
         // filename size writing
         for (int j = 0; j < 4; j++) {
@@ -15,11 +18,11 @@ ArrayList bake(s_ArrayList filenames) {
             length /= 256;
         }
 
-        length = strlen(filenames.values[i]);
+        length = strlen(local);
 
         //filename writing
         for (int j = 0; j < length; j++) {
-            pushBack(&list, filenames.values[i][j]);
+            pushBack(&list, local[j]);
         }
 
         //allocating memory for file size
@@ -33,9 +36,12 @@ ArrayList bake(s_ArrayList filenames) {
         //file reading
         FILE *in = fopen(filenames.values[i], "rb");
 
-        char new_byte;
-        while ((new_byte = fgetc(in)) != EOF) {
-            pushBack(&list, new_byte);
+        if (in == NULL) {
+            printf("ERROR! File '%s' does not exist.\n", filenames.values[i]);
+        }
+
+        while (!feof(in)) {
+            pushBack(&list, fgetc(in));
             size++;
         }
 
@@ -79,10 +85,61 @@ ArrayList bakeEncoder(ArrayList encoder, ArrayList data) {
     return muffin;
 }
 
+void split(ArrayList data, char *directory) {
+    int power;
+    int idx = 0;
+
+    while (idx < data.size - 4) {
+        char local[LINESIZE];
+        int n_size = 0;
+        power = 1;
+
+        for (int i = 0; i < 4; i++) {
+            n_size += data.bytes[idx++] * power;
+            power *= 256;
+        }
+
+        for (int i = 0; i < n_size; i++) {
+            local[i] = data.bytes[idx++];
+        }
+        local[n_size] = 0;
+
+        int f_size = 0;
+        power = 1;
+
+        for (int i = 0; i < 4; i++) {
+            f_size += data.bytes[idx++] * power;
+            power *= 256;
+        }
+
+        char filename[LINESIZE];
+        sprintf(filename, "%s\\%s", directory, local);
+
+        FILE *out = fopen(filename, "wb");
+
+        if (out == NULL) {
+            printf("ERROR! File writing failed for '%s'.\n", filename);
+            return;
+        }
+
+        for (int i = 0; i < f_size; i++) {
+            fputc(data.bytes[idx++], out);
+        }
+
+        fclose(out);
+
+    }
+}
+
 void splitEncoder(ArrayList *encoder, ArrayList *data, char *filename) {
     int power;
 
     FILE *in = fopen(filename, "rb");
+
+    if (in == NULL) {
+        printf("ERROR! File '%s' does not exist.\n", filename);
+        return;
+    }
 
     int e_size = 0;
     power = 1;

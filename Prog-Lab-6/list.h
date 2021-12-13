@@ -17,6 +17,8 @@ typedef struct {
     char **values;
 } s_ArrayList;
 
+void *catch(void *pointer, int line);
+
 ArrayList declareList();
 
 void pushBack(ArrayList *list, char new_byte);

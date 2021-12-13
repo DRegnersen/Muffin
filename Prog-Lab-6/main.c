@@ -15,11 +15,25 @@ void createMuffin(char *muf_name, char *directory, s_ArrayList filenames) {
 
     FILE *out = fopen(filename, "wb");
 
+    if (out == NULL) {
+        printf("ERROR! File writing failed for '%s'.\n", filename);
+        return;
+    }
+
     for (int i = 0; i < muffin.size; i++) {
         fputc(muffin.bytes[i], out);
     }
 
     fclose(out);
+}
+
+void extractFromMuffin(char *muf_name, char *directory) {
+    ArrayList encoder = declareList();
+    ArrayList data = declareList();
+    splitEncoder(&encoder, &data, muf_name);
+    ArrayList decoded = extract(data, encoder);
+
+    split(decoded, directory);
 }
 
 int main(int argc, char **argv) {
@@ -40,18 +54,20 @@ int main(int argc, char **argv) {
                 i++;
             }
 
-            printf("Enter directory:");
-            // gets(directory);
+            printf("Enter Muffin's directory:");
+            gets(directory);
             printf("Enter Muffin's name:");
-            //gets(muf_name);
+            gets(muf_name);
 
-            createMuffin("new_arch", "C:\\Users\\deofr\\C\\Prog-Lab-6\\archive", filenames);
+            createMuffin(muf_name, directory, filenames);
 
         } else if (!strcmp(command, "--extract")) {
-            ArrayList encoder = declareList();
-            ArrayList data = declareList();
-            splitEncoder(&encoder, &data, "C:\\Users\\deofr\\C\\Prog-Lab-6\\archive\\new_arch.muf");
-            ArrayList decoded = extract(data, encoder);
+            char directory[LINESIZE];
+
+            printf("Enter directory for extracted files:");
+            gets(directory);
+
+            extractFromMuffin(argv[++i], directory);
         } else {
             printf("Command '%s' is unacceptable\n", command);
         }

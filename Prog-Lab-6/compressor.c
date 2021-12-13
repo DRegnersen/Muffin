@@ -22,12 +22,7 @@ Node *merge(int size, Node ***array) {
         return NULL;
     }
 
-    Node *new_node = NULL;
-    new_node = (Node *) malloc(sizeof(Node));
-
-    if (new_node == NULL) {
-        printf("ERROR! Segmentation fault, line: \n", __LINE__);
-    }
+    Node *new_node = (Node *) catch(malloc(sizeof(Node)), __LINE__);
 
     new_node->rank = (*array)[0]->rank + (*array)[1]->rank;
     new_node->left = (*array)[0];
@@ -66,19 +61,10 @@ void encode(char ***encoder, Node *root, char *cur_code) {
 }
 
 char **createEncoder(ArrayList toCompress) {
-    Node **freq_table = NULL;
-    freq_table = (Node **) malloc(256 * sizeof(Node *));
-
-    if (freq_table == NULL) {
-        printf("ERROR! Segmentation fault, line: \n", __LINE__);
-    }
+    Node **freq_table = (Node **) catch(malloc(256 * sizeof(Node *)), __LINE__);
 
     for (int i = 0; i < 256; i++) {
-        freq_table[i] = (Node *) malloc(sizeof(Node));
-
-        if (freq_table[i] == NULL) {
-            printf("ERROR! Segmentation fault, line: \n", __LINE__);
-        }
+        freq_table[i] = (Node *) catch(malloc(sizeof(Node)), __LINE__);
 
         freq_table[i]->value = i;
         freq_table[i]->rank = EMPTY;
@@ -97,12 +83,7 @@ char **createEncoder(ArrayList toCompress) {
         }
     }
 
-    Node **queue = NULL;
-    queue = (Node **) malloc(q_size * sizeof(Node *));
-
-    if (queue == NULL) {
-        printf("ERROR! Segmentation fault, line: \n", __LINE__);
-    }
+    Node **queue = (Node **) catch(malloc(q_size * sizeof(Node *)), __LINE__);
 
     int count = 0;
 
@@ -122,19 +103,10 @@ char **createEncoder(ArrayList toCompress) {
     sort(q_size, &queue);
     while (merge(q_size, &queue) != NULL);
 
-    char **encoder = NULL;
-    encoder = (char **) malloc(256 * sizeof(char *));
-
-    if (encoder == NULL) {
-        printf("ERROR! Segmentation fault, line: \n", __LINE__);
-    }
+    char **encoder = (char **) catch(malloc(256 * sizeof(char *)), __LINE__);
 
     for (int i = 0; i < 256; i++) {
-        encoder[i] = (char *) malloc(CODESIZE * sizeof(char));
-        if (encoder[i] == NULL) {
-            printf("ERROR! Segmentation fault, line: \n", __LINE__);
-        }
-
+        encoder[i] = (char *) catch(malloc(CODESIZE * sizeof(char)), __LINE__);
     }
 
     encode(&encoder, queue[0], "");
@@ -143,6 +115,7 @@ char **createEncoder(ArrayList toCompress) {
     //    free(queue[i]);
     //     queue[i] = NULL;
     //  }
+
     free(queue);
     queue = NULL;
 
@@ -153,12 +126,7 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     char **encoder = createEncoder(data);
     ArrayList compressed = declareList();
 
-    short *contains_table = NULL;
-    contains_table = (short *) malloc(256 * sizeof(short));
-
-    if (contains_table == NULL) {
-        printf("ERROR! Segmentation fault, line: \n", __LINE__);
-    }
+    short *contains_table = (short *) catch(malloc(256 * sizeof(short)), __LINE__);
 
     for (int i = 0; i < 256; i++) {
         contains_table[i] = 0;
@@ -230,7 +198,7 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
 
 void insertNode(Node **root, char byte, int c_size, int code) {
     if ((*root) == NULL) {
-        (*root) = (Node *) malloc(sizeof(Node));
+        (*root) = (Node *) catch(malloc(sizeof(Node)), __LINE__);
 
         (*root)->left = NULL;
         (*root)->right = NULL;

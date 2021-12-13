@@ -6,6 +6,11 @@
 
 void createMuffin(char *muf_name, char *directory, s_ArrayList filenames) {
     ArrayList data = bake(filenames);
+
+    // for (int i = 0; i < data.size; i++) {
+    //     printf("%c", data.bytes[i]);
+    // }
+
     ArrayList encoder = declareList();
     ArrayList compressed_data = compress(data, &encoder);
     ArrayList muffin = bakeEncoder(encoder, compressed_data);
@@ -32,6 +37,10 @@ void extractFromMuffin(char *muf_name, char *directory) {
     ArrayList data = declareList();
     splitEncoder(&encoder, &data, muf_name);
     ArrayList decoded = extract(data, encoder);
+
+    // for (int i = 0; i < decoded.size; i++) {
+    //     printf("%c", decoded.bytes[i]);
+    // }
 
     split(decoded, directory);
 }

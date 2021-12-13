@@ -40,8 +40,10 @@ ArrayList bake(s_ArrayList filenames) {
             printf("ERROR! File '%s' does not exist.\n", filenames.values[i]);
         }
 
+        char byte = fgetc(in);
         while (!feof(in)) {
-            pushBack(&list, fgetc(in));
+            pushBack(&list, byte);
+            byte = fgetc(in);
             size++;
         }
 
@@ -49,7 +51,7 @@ ArrayList bake(s_ArrayList filenames) {
 
         //size writing
         for (int j = start_sz_idx; j < start_sz_idx + 4; j++) {
-            list.bytes[j] = size % 256;
+            list.bytes[j] = (unsigned char) size % 256;
             size /= 256;
         }
     }
@@ -108,7 +110,7 @@ void split(ArrayList data, char *directory) {
         power = 1;
 
         for (int i = 0; i < 4; i++) {
-            f_size += data.bytes[idx++] * power;
+            f_size += ((unsigned char) data.bytes[idx++]) * power;
             power *= 256;
         }
 

@@ -4,6 +4,7 @@
 #include "list.h"
 #include "compressor.h"
 
+// Insertion sort
 void sort(int size, Node ***array) {
     for (int i = 1; i < size; i++) {
         int j = i - 1;
@@ -17,6 +18,7 @@ void sort(int size, Node ***array) {
     }
 }
 
+// Creating a new node with given left and right nodes
 Node *merge(int size, Node ***array) {
     if ((*array)[1] == NULL) {
         return NULL;
@@ -36,6 +38,7 @@ Node *merge(int size, Node ***array) {
     return new_node;
 }
 
+// Creating code from encoding tree
 void encode(char ***encoder, Node *root, char *cur_code) {
     if (root == NULL) {
         printf("WARNING! Tree is empty.\n");
@@ -60,6 +63,7 @@ void encode(char ***encoder, Node *root, char *cur_code) {
     }
 }
 
+// Huffman's algorithm
 char **createEncoder(ArrayList toCompress) {
     Node **freq_table = (Node **) catch(malloc(256 * sizeof(Node *)), __LINE__);
 
@@ -74,6 +78,7 @@ char **createEncoder(ArrayList toCompress) {
 
     int q_size = 0;
 
+    // Frequency counting
     for (int i = 0; i < toCompress.size; i++) {
         if (freq_table[(unsigned char) toCompress.bytes[i]]->rank == EMPTY) {
             freq_table[(unsigned char) toCompress.bytes[i]]->rank = 1;
@@ -83,6 +88,7 @@ char **createEncoder(ArrayList toCompress) {
         }
     }
 
+    // Queue creating
     Node **queue = (Node **) catch(malloc(q_size * sizeof(Node *)), __LINE__);
 
     int count = 0;
@@ -97,9 +103,11 @@ char **createEncoder(ArrayList toCompress) {
         }
     }
 
+    //Making frequency table free
     free(freq_table);
     freq_table = NULL;
 
+    // Encoding tree creating
     sort(q_size, &queue);
     while (merge(q_size, &queue) != NULL);
 
@@ -111,17 +119,20 @@ char **createEncoder(ArrayList toCompress) {
 
     encode(&encoder, queue[0], "");
 
-    //  for (int i = 0; i < q_size; i++) {
-    //    free(queue[i]);
-    //     queue[i] = NULL;
-    //  }
+    // Making nodes free
+    for (int i = 0; i < q_size; i++) {
+        free(queue[i]);
+        queue[i] = NULL;
+    }
 
     free(queue);
     queue = NULL;
 
+    printf("=o==o=o\n");
     return encoder;
 }
 
+// Main compression function
 ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     char **encoder = createEncoder(data);
     ArrayList compressed = declareList();
@@ -135,6 +146,7 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     char new_byte = 0;
     int power = 1;
 
+    // Writing data into bytes
     for (int i = 0; i < data.size; i++) {
         contains_table[(unsigned char) data.bytes[i]] = 1;
 
@@ -156,6 +168,7 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
         pushBack(&compressed, new_byte);
     }
 
+    // Encoding table writing
     for (int i = 0; i < 256; i++) {
         if (contains_table[i]) {
             pushBack(compressed_encoder, (char) i);
@@ -185,30 +198,29 @@ ArrayList compress(ArrayList data, ArrayList *compressed_encoder) {
     free(contains_table);
     contains_table = NULL;
 
-    // for (int i = 0; i < 256; i++) {
-    //     free(encoder[i]);
-    //     encoder[i] = NULL;
-    // }
-
     free(encoder);
     encoder = NULL;
 
+    printf("\\     /\n");
     return compressed;
 }
 
 void insertNode(Node **root, char byte, int c_size, int code) {
     if ((*root) == NULL) {
+        // If node is absent, you should create a new one
         (*root) = (Node *) catch(malloc(sizeof(Node)), __LINE__);
 
         (*root)->left = NULL;
         (*root)->right = NULL;
     }
 
+    // End of code
     if (c_size == 0) {
         (*root)->value = byte;
         return;
     }
 
+    // Recursive code into tree conversion
     if (code % 2 == 0) {
         insertNode(&((*root)->left), byte, c_size - 1, code / 2);
     } else {
@@ -224,9 +236,11 @@ Node *createDecodingTree(ArrayList compressed_encoder) {
         int c_size = (unsigned char) compressed_encoder.bytes[i++];
         int code = 0;
 
+        // Number of code bytes counting
         int bytes_count = (c_size % 8 == 0) ? c_size / 8 : c_size / 8 + 1;
         int power = 1;
 
+        // Code reading
         for (int j = i; j < i + bytes_count; j++) {
             code += ((unsigned char) compressed_encoder.bytes[j]) * power;
             power *= 256;
@@ -236,6 +250,7 @@ Node *createDecodingTree(ArrayList compressed_encoder) {
         insertNode(&root, byte, c_size, code);
     }
 
+    printf("=o==(\n");
     return root;
 }
 
@@ -249,6 +264,7 @@ ArrayList extract(ArrayList data, ArrayList compressed_encoder) {
     int bit_count = 8;
     short isEnd = 0;
 
+    // Converting code into bytes
     while (idx < data.size) {
         while (cur_node->left != NULL && cur_node->right != NULL) {
             if (idx >= data.size) {
@@ -264,6 +280,7 @@ ArrayList extract(ArrayList data, ArrayList compressed_encoder) {
             } else {
                 cur_node = cur_node->right;
             }
+
             bit_count--;
             data.bytes[idx] = byte / 2;
 
@@ -279,5 +296,6 @@ ArrayList extract(ArrayList data, ArrayList compressed_encoder) {
         }
     }
 
+    printf("\\    (\n");
     return extracted;
 }

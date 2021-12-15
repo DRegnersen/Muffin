@@ -4,19 +4,18 @@
 #include "baker.h"
 #include "compressor.h"
 
-void createMuffin(char *muf_name, char *directory, s_ArrayList filenames) {
+// ----------------------------
+// ---------- MUFFIN ----------
+// ----------------------------
+
+void createArchive(char *arch_name, char *directory, s_ArrayList filenames) {
     ArrayList data = bake(filenames);
-
-    // for (int i = 0; i < data.size; i++) {
-    //     printf("%c", data.bytes[i]);
-    // }
-
     ArrayList encoder = declareList();
     ArrayList compressed_data = compress(data, &encoder);
-    ArrayList muffin = bakeEncoder(encoder, compressed_data);
+    ArrayList packed_archive = bakeEncoder(encoder, compressed_data);
 
     char filename[LINESIZE];
-    sprintf(filename, "%s\\%s.muf", directory, muf_name);
+    sprintf(filename, "%s\\%s.muf", directory, arch_name);
 
     FILE *out = fopen(filename, "wb");
 
@@ -25,24 +24,39 @@ void createMuffin(char *muf_name, char *directory, s_ArrayList filenames) {
         return;
     }
 
-    for (int i = 0; i < muffin.size; i++) {
-        fputc(muffin.bytes[i], out);
+    for (int i = 0; i < packed_archive.size; i++) {
+        fputc(packed_archive.bytes[i], out);
     }
 
     fclose(out);
+    printf("Archive has been successfully created. Path: %s\n", filename);
 }
 
-void extractFromMuffin(char *muf_name, char *directory) {
+void extractFromArchive(char *arch_name, char *directory) {
     ArrayList encoder = declareList();
     ArrayList data = declareList();
-    splitEncoder(&encoder, &data, muf_name);
+    splitEncoder(&encoder, &data, arch_name);
     ArrayList decoded = extract(data, encoder);
 
-    // for (int i = 0; i < decoded.size; i++) {
-    //     printf("%c", decoded.bytes[i]);
-    // }
+    splitAndCreate(decoded, directory);
+    printf("Files have been successfully extracted.\n");
+}
 
-    split(decoded, directory);
+void printLocalFilenames(char *arch_name) {
+    ArrayList encoder = declareList();
+    ArrayList data = declareList();
+    splitEncoder(&encoder, &data, arch_name);
+    ArrayList decoded = extract(data, encoder);
+
+    s_ArrayList local_names = getFilenames(decoded);
+
+    char local_arch_name[LINESIZE];
+    sscanf(strrchr(arch_name, '\\'), "\\%s", local_arch_name);
+
+    printf("Files from %s:\n", local_arch_name);
+    for (int i = 0; i < local_names.size; i++) {
+        printf("%d) %s\n", i + 1, local_names.values[i]);
+    }
 }
 
 int main(int argc, char **argv) {
@@ -53,7 +67,7 @@ int main(int argc, char **argv) {
         if (!strcmp(command, "--create")) {
             s_ArrayList filenames = s_declareList();
             char directory[LINESIZE];
-            char muf_name[LINESIZE];
+            char arch_name[LINESIZE];
 
             for (int j = i + 1; j < argc; j++) {
                 if (argv[j][0] == '-') {
@@ -63,20 +77,22 @@ int main(int argc, char **argv) {
                 i++;
             }
 
-            printf("Enter Muffin's directory:");
+            printf("Archive directory:");
             gets(directory);
-            printf("Enter Muffin's name:");
-            gets(muf_name);
+            printf("Name:");
+            gets(arch_name);
 
-            createMuffin(muf_name, directory, filenames);
+            createArchive(arch_name, directory, filenames);
 
         } else if (!strcmp(command, "--extract")) {
             char directory[LINESIZE];
 
-            printf("Enter directory for extracted files:");
+            printf("Extracted files directory:");
             gets(directory);
 
-            extractFromMuffin(argv[++i], directory);
+            extractFromArchive(argv[++i], directory);
+        } else if (!strcmp(command, "--list")) {
+            printLocalFilenames(argv[++i]);
         } else {
             printf("Command '%s' is unacceptable\n", command);
         }

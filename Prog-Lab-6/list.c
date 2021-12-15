@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "list.h"
 
-// ========== Segmentation fault catching ==========
+// ---------- Segmentation fault catching ----------
 
 void *catch(void *pointer, int line) {
     if (pointer == NULL) {
@@ -12,7 +13,7 @@ void *catch(void *pointer, int line) {
     return pointer;
 }
 
-// ========== Standard List ==========
+// ---------- Standard List ----------
 
 ArrayList declareList() {
     ArrayList new_list;
@@ -32,7 +33,7 @@ void pushBack(ArrayList *list, char new_byte) {
     list->bytes[(list->size)++] = new_byte;
 }
 
-// ========== String List ==========
+// ---------- String List ----------
 
 s_ArrayList s_declareList() {
     s_ArrayList new_list;
@@ -58,5 +59,5 @@ void s_pushBack(s_ArrayList *list, char *new_value) {
         }
     }
 
-    list->values[(list->size)++] = new_value;
+    strcpy(list->values[(list->size)++], new_value);
 }
